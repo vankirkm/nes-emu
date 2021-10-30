@@ -31,11 +31,17 @@ public:
     };
 
     uint8_t status = 0x00;
-    uint8_t sPoint = 0x00;
+    uint8_t s_point = 0x00;
     uint8_t x = 0x00;
     uint8_t y = 0x00;
     uint8_t a = 0x00;
     uint16_t pc = 0x0000;
+
+    // Function to fetch the data from memory that will be operated on
+    uint8_t fetch();
+
+    void reset();
+    void clock();
 
     uint8_t GetFlag(CPU_FLAGS f);
     void SetFlag(CPU_FLAGS f, bool v);
@@ -86,6 +92,15 @@ private:
 
 
 private:
+
+    uint8_t  fetched_data     = 0x00;   // working input value to the ALU
+    uint16_t temp        = 0x0000;      // convenience variable
+    uint16_t addr_abs    = 0x0000;      // all used memory addresses end up in here
+    uint16_t addr_rel    = 0x00;        // Represents absolute address following a branch
+    uint8_t  opcode      = 0x00;        // instruction byte
+    uint8_t  cycles      = 0;	        // how many cycles the instruction has remaining
+    uint32_t clock_count = 0;	        // total number of clocks
+
     Bus *bus = nullptr;
     uint8_t read(uint16_t a);
     void write(uint16_t a, uint8_t d);

@@ -24,15 +24,14 @@ Cpu::Cpu(){
        /* BX */     {"BCS", &c::BCS, &c::REL, 2}, {"LDA", &c::LDA, &c::IZY, 5}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZY, 5}, {"LDY", &c::LDY, &c::ZPX, 4}, {"LDA", &c::LDA, &c::ZPX, 4}, {"LDX", &c::LDX, &c::ZPY, 4}, {"???", &c::XXX, &c::ZPY, 4}, {"CLV", &c::CLV, &c::IMP, 2}, {"LDA", &c::LDA, &c::ABY, 4}, {"TSX", &c::TSX, &c::IMP, 2}, {"???", &c::XXX, &c::ABY, 4}, {"LDY", &c::LDY, &c::ABX, 4}, {"LDA", &c::LDA, &c::ABX, 4}, {"LDX", &c::LDX, &c::ABY, 4}, {"???", &c::XXX, &c::ABY, 4},
        /* CX */     {"CPY", &c::CPY, &c::IMM, 2}, {"CMP", &c::CMP, &c::IZX, 6}, {"???", &c::XXX, &c::IMM, 2}, {"???", &c::XXX, &c::IZX, 8}, {"CPY", &c::CPY, &c::ZP0, 3}, {"CMP", &c::CMP, &c::ZP0, 3}, {"DEC", &c::DEC, &c::ZP0, 5}, {"???", &c::XXX, &c::ZP0, 5}, {"INY", &c::INY, &c::IMP, 2}, {"CMP", &c::CMP, &c::IMM, 2}, {"DEX", &c::DEX, &c::IMP, 2}, {"???", &c::XXX, &c::IMM, 2}, {"CPY", &c::CPY, &c::ABS, 4}, {"CMP", &c::CMP, &c::ABS, 4}, {"DEC", &c::DEC, &c::ABS, 6}, {"???", &c::XXX, &c::ABS, 6},
        /* DX */     {"BNE", &c::BNE, &c::REL, 2}, {"CMP", &c::CMP, &c::IZY, 5}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZY, 8}, {"???", &c::XXX, &c::ZPX, 4}, {"CMP", &c::CMP, &c::ZPX, 4}, {"DEC", &c::DEC, &c::ZPX, 6}, {"???", &c::XXX, &c::ZPX, 6}, {"CLD", &c::CLD, &c::IMP, 2}, {"CMP", &c::CMP, &c::ABY, 4}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::ABY, 7}, {"???", &c::XXX, &c::ABX, 4}, {"CMP", &c::CMP, &c::ABX, 4}, {"DEC", &c::DEC, &c::ABX, 7}, {"???", &c::XXX, &c::ABX, 7},
-       /* DX */     {"CPX", &c::CPX, &c::IMM, 2}, {"SBC", &c::SBC, &c::IZX, 6}, {"???", &c::XXX, &c::IMM, 2}, {"???", &c::XXX, &c::IZX, 8}, {"CPX", &c::CPX, &c::ZP0, 3}, {"SBC", &c::SBC, &c::ZP0, 3}, {"INC", &c::INC, &c::ZP0, 5}, {"???", &c::XXX, &c::ZP0, 5}, {"INX", &c::INX, &c::IMP, 2}, {"SBC", &c::SBC, &c::IMM, 2}, {"NOP", &c::NOP, &c::IMP, 2}, {"???", &c::XXX, &c::IMM, 2}, {"CPX", &c::CPX, &c::ABS, 4}, {"SBC", &c::SBC, &c::ABS, 4}, {"INC", &c::INC, &c::ABS, 6}, {"???", &c::XXX, &c::ABS, 6},
-       /* DX */     {"BEQ", &c::BEQ, &c::REL, 2}, {"SBC", &c::SBC, &c::IZY, 5}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZY, 8}, {"???", &c::XXX, &c::ZPX, 4}, {"SBC", &c::SBC, &c::ZPX, 4}, {"INC", &c::INC, &c::ZPX, 6}, {"???", &c::XXX, &c::ZPX, 6}, {"SED", &c::SED, &c::IMP, 2}, {"SBC", &c::SBC, &c::ABY, 4}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::ABY, 7}, {"???", &c::XXX, &c::ABX, 4}, {"SBC", &c::SBC, &c::ABX, 4}, {"INC", &c::INC, &c::ABX, 7}, {"???", &c::XXX, &c::ABX, 7},
+       /* EX */     {"CPX", &c::CPX, &c::IMM, 2}, {"SBC", &c::SBC, &c::IZX, 6}, {"???", &c::XXX, &c::IMM, 2}, {"???", &c::XXX, &c::IZX, 8}, {"CPX", &c::CPX, &c::ZP0, 3}, {"SBC", &c::SBC, &c::ZP0, 3}, {"INC", &c::INC, &c::ZP0, 5}, {"???", &c::XXX, &c::ZP0, 5}, {"INX", &c::INX, &c::IMP, 2}, {"SBC", &c::SBC, &c::IMM, 2}, {"NOP", &c::NOP, &c::IMP, 2}, {"???", &c::XXX, &c::IMM, 2}, {"CPX", &c::CPX, &c::ABS, 4}, {"SBC", &c::SBC, &c::ABS, 4}, {"INC", &c::INC, &c::ABS, 6}, {"???", &c::XXX, &c::ABS, 6},
+       /* FX */     {"BEQ", &c::BEQ, &c::REL, 2}, {"SBC", &c::SBC, &c::IZY, 5}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZY, 8}, {"???", &c::XXX, &c::ZPX, 4}, {"SBC", &c::SBC, &c::ZPX, 4}, {"INC", &c::INC, &c::ZPX, 6}, {"???", &c::XXX, &c::ZPX, 6}, {"SED", &c::SED, &c::IMP, 2}, {"SBC", &c::SBC, &c::ABY, 4}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::ABY, 7}, {"???", &c::XXX, &c::ABX, 4}, {"SBC", &c::SBC, &c::ABX, 4}, {"INC", &c::INC, &c::ABX, 7}, {"???", &c::XXX, &c::ABX, 7},
 
     };
 }
 
-Cpu::~Cpu(){
-
-}
+// destructor
+Cpu::~Cpu(){}
 
 uint8_t Cpu::read(uint16_t a){
     return bus->read(a, false);
@@ -43,10 +42,43 @@ void Cpu::write(uint16_t a, uint8_t d){
 }
 
 //////////////////////////////////////////////////////////////
+// ---------------------EXTERNAL INPUT--------------------- //
+//////////////////////////////////////////////////////////////
+
+void Cpu::reset(){
+    // Get address to set program counter to
+    addr_abs = 0xFFFC;
+    uint16_t lo = read(addr_abs + 0);
+    uint16_t hi = read(addr_abs + 1);
+
+    // Set it
+    pc = (hi << 8) | lo;
+
+    // Reset internal registers
+    a = 0;
+    x = 0;
+    y = 0;
+    s_point = 0xFD;
+    status = 0x00 | U;
+
+    // clear helper variables
+    addr_rel = 0x0000;
+    addr_abs = 0x0000;
+    fetched_data = 0x00;
+
+    cycles = 8;
+}
+
+// perform a clock cycle of emulation
+void Cpu::clock(){
+}
+
+//////////////////////////////////////////////////////////////
 // --------------------ADDRESSING MODES-------------------- //
 //////////////////////////////////////////////////////////////
 
 uint8_t Cpu::IMP(){
+    fetched_data = a;
     return 0;
 };
 uint8_t Cpu::IMM(){
@@ -83,6 +115,13 @@ uint8_t Cpu::IZY(){
     return 0;
 };
 
+uint8_t Cpu::fetch()
+{
+    if (!(lookup_table[opcode].addrmode == &Cpu::IMP))
+        fetched_data = read(addr_abs);
+    return fetched_data;
+}
+
 /////////////////////////////////////////////////////
 // --------------------OPCODES-------------------- //
 /////////////////////////////////////////////////////
@@ -92,6 +131,7 @@ uint8_t Cpu::ADC() {
 }
 
 uint8_t Cpu::AND() {
+    fetch();
     return 0;
 }
 
