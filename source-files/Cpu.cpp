@@ -81,43 +81,126 @@ uint8_t Cpu::IMP(){
     fetched_data = a;
     return 0;
 };
+
 uint8_t Cpu::IMM(){
+    addr_abs = pc++;
     return 0;
 };
+
 uint8_t Cpu::ZP0(){
+    addr_abs = read(pc);
+    pc++;
+    addr_abs &= 0x00FF;
     return 0;
 };
+
 uint8_t Cpu::ZPX(){
+    addr_abs = (read(pc) + x);
+    pc++;
+    addr_abs &= 0x00FF;
     return 0;
 };
+
 uint8_t Cpu::ZPY(){
+    addr_abs = (read(pc) + y);
+    pc++;
     return 0;
 };
+
 uint8_t Cpu::REL(){
+    addr_rel = read(pc);
+    pc++;
+
+    if(addr_rel & 0x80) {
+        addr_rel |= 0xFF00;
+    }
     return 0;
 };
+
 uint8_t Cpu::ABS(){
+    uint16_t low = read(pc);
+    pc++;
+    uint16_t high = read(pc);
+    pc++;
+    addr_abs = (high << 8) | low;
     return 0;
 };
+
 uint8_t Cpu::ABX(){
+    uint16_t low = read(pc);
+    pc++;
+    uint16_t high = read(pc);
+    pc++;
+    addr_abs = (high << 8) | low;
+    addr_abs += x;
+
+    if((addr_abs & 0xFF00) != high << 8){
+        return 1;
+    }
     return 0;
 };
+
 uint8_t Cpu::ABY(){
+    uint16_t low = read(pc);
+    pc++;
+    uint16_t high = read(pc);
+    pc++;
+    addr_abs = (high << 8) | low;
+    addr_abs += y;
+
+    if((addr_abs & 0xFF00) != high << 8){
+        return 1;
+    }
     return 0;
 };
+
+// If the 16-bit argument of an indirect JMP is located between 2 pages,
+// then the LSB will be read from 0x01FF and the MSB will be read from 0x0100,
+// which is a hardware bug in the NES that will yield an invalid address.
 uint8_t Cpu::IND(){
+    uint16_t pt_low = read(pc);
+    pc++;
+    uint16_t pt_high = read(pc);
+    pc++;
+
+    uint16_t pt = (pt_high << 8) | pt_low;
+
+    if (pt_low == 0x00FF){
+        addr_abs = (read(pt & 0xFF00) << 8) | read(pt + 0);
+    }else {
+        addr_abs = (read(pt + 1) << 8) | read(pt + 0);
+    }
     return 0;
 };
+
 uint8_t Cpu::IZX(){
+    uint16_t temp = read(pc);
+    pc++;
+    uint16_t low = read((uint16_t)(temp + (uint16_t)x) & 0x00FF);
+    uint16_t high = read((uint16_t)(temp + (uint16_t)x + 1) & 0x00FF);
+    addr_abs = (high << 8) | low;
+
     return 0;
 };
+
 uint8_t Cpu::IZY(){
-    return 0;
+    uint16_t temp = read(pc);
+    pc++;
+    uint16_t low = read(temp & 0x00FF);
+    uint16_t high = read((temp + 1) & 0x00FF);
+    addr_abs = addr_abs = (high << 8) | low;
+    addr_abs += y;
+
+    if((addr_abs & 0xFF00) != (high << 8)){
+        return 1;
+    }else {
+        return 0;
+    }
 };
 
 uint8_t Cpu::fetch()
 {
-    if (!(lookup_table[opcode].addrmode == &Cpu::IMP))
+    if (lookup_table[opcode].addrmode != &Cpu::IMP)
         fetched_data = read(addr_abs);
     return fetched_data;
 }
