@@ -41,6 +41,20 @@ void Cpu::write(uint16_t a, uint8_t d){
     bus->write(a, d);
 }
 
+uint8_t Cpu::GetFlag(CPU_FLAGS f){
+    return ((status & f) > 0) ? 1 : 0;
+}
+
+void Cpu::SetFlag(CPU_FLAGS f, bool v) {
+    if(v){
+        status |= f;
+    }else {
+        // We AND the value of the status register with the complement of f to clear
+        // just that specific bit from the status register.
+        status &= ~f;
+    }
+}
+
 //////////////////////////////////////////////////////////////
 // ---------------------EXTERNAL INPUT--------------------- //
 //////////////////////////////////////////////////////////////
