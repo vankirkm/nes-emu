@@ -91,16 +91,24 @@ void Cpu::clock(){
 // --------------------ADDRESSING MODES-------------------- //
 //////////////////////////////////////////////////////////////
 
+// Implied - addressing mode for simple instructions that does not
+// target a specific place in memory. For convenience, put the value
+// of the accumulator into fetched_data to later do an operation on it.
 uint8_t Cpu::IMP(){
     fetched_data = a;
     return 0;
 };
 
+// Immediate - the next byte in memory will be used as a value, so
+// point the read address to the next byte.
 uint8_t Cpu::IMM(){
     addr_abs = pc++;
     return 0;
 };
 
+// Zero Page - allows us to absolutely address a location in the first 0xFF
+// bytes of the address range, which allows program memory to be saved by only
+// specifying one byte instead of two
 uint8_t Cpu::ZP0(){
     addr_abs = read(pc);
     pc++;
@@ -108,6 +116,8 @@ uint8_t Cpu::ZP0(){
     return 0;
 };
 
+// Zero Page w/ X offset - the same as zero page addressing, but the value in
+// the X register is added to the single byte value supplied by the instruction
 uint8_t Cpu::ZPX(){
     addr_abs = (read(pc) + x);
     pc++;
@@ -115,12 +125,15 @@ uint8_t Cpu::ZPX(){
     return 0;
 };
 
+// Zero page w/ Y offset - same as ZPX, but using the Y register instead
 uint8_t Cpu::ZPY(){
     addr_abs = (read(pc) + y);
     pc++;
     return 0;
 };
 
+// Relative - Addressing mode using in branching. The address used must be
+// within -128 and +127 of the calling branch instruction
 uint8_t Cpu::REL(){
     addr_rel = read(pc);
     pc++;
@@ -131,6 +144,7 @@ uint8_t Cpu::REL(){
     return 0;
 };
 
+// Absolute - entire 16-bit address is taken from the current instruction
 uint8_t Cpu::ABS(){
     uint16_t low = read(pc);
     pc++;
@@ -140,6 +154,9 @@ uint8_t Cpu::ABS(){
     return 0;
 };
 
+// Absolute w/ X offset - Same as absolute addressing, but the current value
+// stored in the X register is added to the two-byte address given by the instruction.
+// If the resulting address is on a different page, an additional clock cycle is required.
 uint8_t Cpu::ABX(){
     uint16_t low = read(pc);
     pc++;
@@ -154,6 +171,8 @@ uint8_t Cpu::ABX(){
     return 0;
 };
 
+// Absolute w/ Y offset - functions the same way as ABX, but using the value in the
+// Y register instead.
 uint8_t Cpu::ABY(){
     uint16_t low = read(pc);
     pc++;
@@ -168,6 +187,8 @@ uint8_t Cpu::ABY(){
     return 0;
 };
 
+// Indirect - the two-byte address given by the instruction is used to fetch
+// the actual address we want from memory.
 // If the 16-bit argument of an indirect JMP is located between 2 pages,
 // then the LSB will be read from 0x01FF and the MSB will be read from 0x0100,
 // which is a hardware bug in the NES that will yield an invalid address.
@@ -187,6 +208,9 @@ uint8_t Cpu::IND(){
     return 0;
 };
 
+// Indirect X - take the one byte address from the instruction and offset with
+// the value in the X register. Then read the actual address from the resultant
+// address of this operation.
 uint8_t Cpu::IZX(){
     uint16_t temp = read(pc);
     pc++;
@@ -197,6 +221,10 @@ uint8_t Cpu::IZX(){
     return 0;
 };
 
+// Indirect Y - The 1 byte address from the instruction is read and used to index an
+// address on page 0x00. The actual 2 byte address is then read form this location
+// and then is offset by the value in the Y register. An additional clock cycle is
+// required if this results in a change in page.
 uint8_t Cpu::IZY(){
     uint16_t temp = read(pc);
     pc++;
