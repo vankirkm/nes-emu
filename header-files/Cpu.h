@@ -54,7 +54,7 @@ private:
     struct INSTRUCTION
             {
         std::string name;
-        uint8_t     (Cpu::*operate )(void) = nullptr;
+        uint8_t     (Cpu::*operate)(void) = nullptr;
         uint8_t     (Cpu::*addrmode)(void) = nullptr;
         uint8_t     cycles = 0;
             };

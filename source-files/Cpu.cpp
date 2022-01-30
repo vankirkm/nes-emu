@@ -6,26 +6,26 @@
 
 Cpu::Cpu(){
 
-    using c = Cpu;
+    using cpu = Cpu;
     lookup_table = {
 
        //--------------------------------X0------------------------------------------X1-----------------------------------------X2----------------------------------------X3-----------------------------------------X4----------------------------------------X5----------------------------------------X6-----------------------------------------X7----------------------------------------X8----------------------------------------X9-----------------------------------------XA----------------------------------------XB-----------------------------------------XC----------------------------------------XD----------------------------------------XE-----------------------------------------XF
-       /* 0X */     {"BRK", &c::BRK, &c::IMP, 7}, {"ORA", &c::ORA, &c::INX, 6}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::INX, 2}, {"???", &c::XXX, &c::ZP0, 2}, {"ORA", &c::ORA, &c::ZP0, 3}, {"ASL", &c::ASL, &c::ZP0, 5}, {"???", &c::XXX, &c::ZP0, 2}, {"PHP", &c::PHP, &c::IMP, 3}, {"ORA", &c::ORA, &c::IMM, 2}, {"ASL", &c::ASL, &c::IMP, 2}, {"???", &c::XXX, &c::IMM, 2}, {"???", &c::XXX, &c::ABS, 4}, {"ORA", &c::ORA, &c::ABS, 4}, {"ASL", &c::ASL, &c::ABS, 6}, {"???", &c::XXX, &c::ABS, 6},
-       /* 1X */     {"BPL", &c::BPL, &c::REL, 2}, {"ORA", &c::ORA, &c::IZY, 5}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZX, 8}, {"???", &c::XXX, &c::ZPX, 4}, {"ORA", &c::ORA, &c::ZPX, 4}, {"ASL", &c::ASL, &c::ZPX, 6}, {"???", &c::XXX, &c::ZPX, 6}, {"CLC", &c::CLC, &c::IMP, 2}, {"ORA", &c::ORA, &c::ABY, 4}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::ABY, 7}, {"???", &c::XXX, &c::ABX, 4}, {"ORA", &c::ORA, &c::ABX, 4}, {"ASL", &c::ASL, &c::ABX, 7}, {"???", &c::XXX, &c::ABX, 7},
-       /* 2X */     {"JSR", &c::JSR, &c::ABS, 6}, {"AND", &c::AND, &c::IZX, 6}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZX, 8}, {"BIT", &c::BIT, &c::ZP0, 3}, {"AND", &c::AND, &c::ZP0, 3}, {"ROL", &c::ROL, &c::ZP0, 5}, {"???", &c::XXX, &c::ZP0, 5}, {"PLP", &c::PLP, &c::IMP, 4}, {"AND", &c::AND, &c::IMM, 2}, {"ROL", &c::ROL, &c::IMP, 2}, {"???", &c::XXX, &c::IMM, 2}, {"BIT", &c::BIT, &c::ABS, 4}, {"AND", &c::AND, &c::ABS, 4}, {"ROL", &c::ROL, &c::ABS, 6}, {"???", &c::XXX, &c::ABS, 6},
-       /* 3X */     {"BMI", &c::BMI, &c::REL, 2}, {"AND", &c::AND, &c::IZY, 5}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZY, 8}, {"???", &c::XXX, &c::ZPX, 4}, {"AND", &c::AND, &c::ZPX, 4}, {"ROL", &c::ROL, &c::ZPX, 6}, {"???", &c::XXX, &c::ZPX, 6}, {"SEC", &c::SEC, &c::IMP, 2}, {"AND", &c::AND, &c::ABY, 4}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::ABY, 7}, {"BIT", &c::BIT, &c::ABX, 4}, {"AND", &c::AND, &c::ABX, 4}, {"ROL", &c::ROL, &c::ABX, 7}, {"???", &c::XXX, &c::ABX, 7},
-       /* 4X */     {"RTI", &c::RTI, &c::IMP, 6}, {"EOR", &c::EOR, &c::IZX, 6}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZX, 8}, {"???", &c::XXX, &c::ZP0, 3}, {"EOR", &c::EOR, &c::ZP0, 3}, {"LSR", &c::LSR, &c::ZP0, 5}, {"???", &c::XXX, &c::ZP0, 5}, {"PHA", &c::PHA, &c::IMP, 3}, {"EOR", &c::EOR, &c::IMM, 2}, {"LSR", &c::LSR, &c::IMP, 2}, {"???", &c::XXX, &c::IMM, 2}, {"JMP", &c::JMP, &c::ABS, 3}, {"EOR", &c::EOR, &c::ABS, 4}, {"LSR", &c::LSR, &c::ABS, 6}, {"???", &c::XXX, &c::ABS, 6},
-       /* 5X */     {"BVC", &c::BVC, &c::REL, 2}, {"EOR", &c::EOR, &c::IZY, 5}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZY, 8}, {"???", &c::XXX, &c::ZPX, 4}, {"EOR", &c::EOR, &c::ZPX, 4}, {"LSR", &c::LSR, &c::ZPX, 6}, {"???", &c::XXX, &c::ZPX, 6}, {"CLI", &c::CLI, &c::IMP, 2}, {"EOR", &c::EOR, &c::ABY, 4}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::ABY, 7}, {"???", &c::XXX, &c::ABX, 4}, {"EOR", &c::EOR, &c::ABX, 4}, {"LSR", &c::LSR, &c::ABX, 7}, {"???", &c::XXX, &c::ABX, 7},
-       /* 6X */     {"RTS", &c::RTS, &c::IMP, 6}, {"ADC", &c::ADC, &c::IZX, 6}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZX, 8}, {"???", &c::XXX, &c::ZP0, 3}, {"ADC", &c::ADC, &c::ZP0, 3}, {"ROR", &c::ROR, &c::ZP0, 5}, {"???", &c::XXX, &c::ZP0, 5}, {"PLA", &c::PLA, &c::IMP, 4}, {"ADC", &c::ADC, &c::IMM, 2}, {"ROR", &c::ROR, &c::IMP, 2}, {"???", &c::XXX, &c::IMM, 2}, {"JMP", &c::JMP, &c::IND, 5}, {"ADC", &c::ADC, &c::ABS, 4}, {"ROR", &c::ROR, &c::ABS, 6}, {"???", &c::XXX, &c::ABS, 6},
-       /* 7X */     {"BVS", &c::BVS, &c::REL, 2}, {"ADC", &c::ADC, &c::IZY, 5}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZY, 8}, {"???", &c::XXX, &c::ZPX, 4}, {"ADC", &c::ADC, &c::ZPX, 4}, {"ROR", &c::ROR, &c::ZPX, 6}, {"???", &c::XXX, &c::ZPX, 6}, {"SEI", &c::SEI, &c::IMP, 2}, {"ADC", &c::ADC, &c::ABY, 4}, {"ROR", &c::ROR, &c::IMP, 2}, {"???", &c::XXX, &c::ABY, 7}, {"???", &c::XXX, &c::ABX, 4}, {"ADC", &c::ADC, &c::ABX, 4}, {"ROR", &c::ROR, &c::ABX, 7}, {"???", &c::XXX, &c::ABX, 7},
-       /* 8X */     {"???", &c::XXX, &c::IMM, 2}, {"STA", &c::STA, &c::IZX, 6}, {"???", &c::XXX, &c::IMM, 2}, {"???", &c::XXX, &c::IZX, 6}, {"STY", &c::STY, &c::ZP0, 3}, {"STA", &c::STA, &c::ZP0, 3}, {"STX", &c::STX, &c::ZP0, 3}, {"???", &c::XXX, &c::ZP0, 3}, {"DEY", &c::DEY, &c::IMP, 2}, {"???", &c::XXX, &c::IMM, 2}, {"TXA", &c::TXA, &c::IMP, 2}, {"???", &c::XXX, &c::IMM, 2}, {"STY", &c::STY, &c::ABS, 4}, {"STA", &c::STA, &c::ABS, 4}, {"STX", &c::STX, &c::ABS, 4}, {"???", &c::XXX, &c::ABS, 4},
-       /* 9X */     {"BCC", &c::BCC, &c::REL, 2}, {"STA", &c::STA, &c::IZY, 6}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZY, 6}, {"STY", &c::STY, &c::ZPX, 4}, {"STA", &c::STA, &c::ZPX, 4}, {"STX", &c::STX, &c::ZPY, 4}, {"???", &c::XXX, &c::ZPY, 4}, {"TYA", &c::TYA, &c::IMP, 2}, {"STA", &c::STA, &c::ABY, 5}, {"TXS", &c::TXS, &c::IMP, 2}, {"???", &c::XXX, &c::ABY, 5}, {"???", &c::XXX, &c::ABX, 5}, {"STA", &c::STA, &c::ABX, 5}, {"???", &c::XXX, &c::ABY, 5}, {"???", &c::XXX, &c::ABY, 5},
-       /* AX */     {"LDY", &c::LDY, &c::IMM, 2}, {"LDA", &c::LDA, &c::IZX, 6}, {"LDX", &c::LDX, &c::IMM, 2}, {"???", &c::XXX, &c::IZX, 6}, {"LDY", &c::LDY, &c::ZP0, 3}, {"LDA", &c::LDA, &c::ZP0, 3}, {"LDX", &c::LDX, &c::ZP0, 3}, {"???", &c::XXX, &c::ZP0, 3}, {"TAY", &c::TAY, &c::IMP, 2}, {"LDA", &c::LDA, &c::IMM, 2}, {"TAX", &c::TAX, &c::IMP, 2}, {"???", &c::XXX, &c::IMM, 2}, {"LDY", &c::LDY, &c::ABS, 4}, {"LDA", &c::LDA, &c::ABS, 4}, {"LDX", &c::LDX, &c::ABS, 4}, {"???", &c::XXX, &c::ABS, 4},
-       /* BX */     {"BCS", &c::BCS, &c::REL, 2}, {"LDA", &c::LDA, &c::IZY, 5}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZY, 5}, {"LDY", &c::LDY, &c::ZPX, 4}, {"LDA", &c::LDA, &c::ZPX, 4}, {"LDX", &c::LDX, &c::ZPY, 4}, {"???", &c::XXX, &c::ZPY, 4}, {"CLV", &c::CLV, &c::IMP, 2}, {"LDA", &c::LDA, &c::ABY, 4}, {"TSX", &c::TSX, &c::IMP, 2}, {"???", &c::XXX, &c::ABY, 4}, {"LDY", &c::LDY, &c::ABX, 4}, {"LDA", &c::LDA, &c::ABX, 4}, {"LDX", &c::LDX, &c::ABY, 4}, {"???", &c::XXX, &c::ABY, 4},
-       /* CX */     {"CPY", &c::CPY, &c::IMM, 2}, {"CMP", &c::CMP, &c::IZX, 6}, {"???", &c::XXX, &c::IMM, 2}, {"???", &c::XXX, &c::IZX, 8}, {"CPY", &c::CPY, &c::ZP0, 3}, {"CMP", &c::CMP, &c::ZP0, 3}, {"DEC", &c::DEC, &c::ZP0, 5}, {"???", &c::XXX, &c::ZP0, 5}, {"INY", &c::INY, &c::IMP, 2}, {"CMP", &c::CMP, &c::IMM, 2}, {"DEX", &c::DEX, &c::IMP, 2}, {"???", &c::XXX, &c::IMM, 2}, {"CPY", &c::CPY, &c::ABS, 4}, {"CMP", &c::CMP, &c::ABS, 4}, {"DEC", &c::DEC, &c::ABS, 6}, {"???", &c::XXX, &c::ABS, 6},
-       /* DX */     {"BNE", &c::BNE, &c::REL, 2}, {"CMP", &c::CMP, &c::IZY, 5}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZY, 8}, {"???", &c::XXX, &c::ZPX, 4}, {"CMP", &c::CMP, &c::ZPX, 4}, {"DEC", &c::DEC, &c::ZPX, 6}, {"???", &c::XXX, &c::ZPX, 6}, {"CLD", &c::CLD, &c::IMP, 2}, {"CMP", &c::CMP, &c::ABY, 4}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::ABY, 7}, {"???", &c::XXX, &c::ABX, 4}, {"CMP", &c::CMP, &c::ABX, 4}, {"DEC", &c::DEC, &c::ABX, 7}, {"???", &c::XXX, &c::ABX, 7},
-       /* EX */     {"CPX", &c::CPX, &c::IMM, 2}, {"SBC", &c::SBC, &c::IZX, 6}, {"???", &c::XXX, &c::IMM, 2}, {"???", &c::XXX, &c::IZX, 8}, {"CPX", &c::CPX, &c::ZP0, 3}, {"SBC", &c::SBC, &c::ZP0, 3}, {"INC", &c::INC, &c::ZP0, 5}, {"???", &c::XXX, &c::ZP0, 5}, {"INX", &c::INX, &c::IMP, 2}, {"SBC", &c::SBC, &c::IMM, 2}, {"NOP", &c::NOP, &c::IMP, 2}, {"???", &c::XXX, &c::IMM, 2}, {"CPX", &c::CPX, &c::ABS, 4}, {"SBC", &c::SBC, &c::ABS, 4}, {"INC", &c::INC, &c::ABS, 6}, {"???", &c::XXX, &c::ABS, 6},
-       /* FX */     {"BEQ", &c::BEQ, &c::REL, 2}, {"SBC", &c::SBC, &c::IZY, 5}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::IZY, 8}, {"???", &c::XXX, &c::ZPX, 4}, {"SBC", &c::SBC, &c::ZPX, 4}, {"INC", &c::INC, &c::ZPX, 6}, {"???", &c::XXX, &c::ZPX, 6}, {"SED", &c::SED, &c::IMP, 2}, {"SBC", &c::SBC, &c::ABY, 4}, {"???", &c::XXX, &c::IMP, 2}, {"???", &c::XXX, &c::ABY, 7}, {"???", &c::XXX, &c::ABX, 4}, {"SBC", &c::SBC, &c::ABX, 4}, {"INC", &c::INC, &c::ABX, 7}, {"???", &c::XXX, &c::ABX, 7},
+       /* 0X */     {"BRK", &cpu::BRK, &cpu::IMP, 7}, {"ORA", &cpu::ORA, &cpu::INX, 6}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::INX, 2}, {"???", &cpu::XXX, &cpu::ZP0, 2}, {"ORA", &cpu::ORA, &cpu::ZP0, 3}, {"ASL", &cpu::ASL, &cpu::ZP0, 5}, {"???", &cpu::XXX, &cpu::ZP0, 2}, {"PHP", &cpu::PHP, &cpu::IMP, 3}, {"ORA", &cpu::ORA, &cpu::IMM, 2}, {"ASL", &cpu::ASL, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IMM, 2}, {"???", &cpu::XXX, &cpu::ABS, 4}, {"ORA", &cpu::ORA, &cpu::ABS, 4}, {"ASL", &cpu::ASL, &cpu::ABS, 6}, {"???", &cpu::XXX, &cpu::ABS, 6},
+       /* 1X */     {"BPL", &cpu::BPL, &cpu::REL, 2}, {"ORA", &cpu::ORA, &cpu::IZY, 5}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IZX, 8}, {"???", &cpu::XXX, &cpu::ZPX, 4}, {"ORA", &cpu::ORA, &cpu::ZPX, 4}, {"ASL", &cpu::ASL, &cpu::ZPX, 6}, {"???", &cpu::XXX, &cpu::ZPX, 6}, {"CLC", &cpu::CLC, &cpu::IMP, 2}, {"ORA", &cpu::ORA, &cpu::ABY, 4}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::ABY, 7}, {"???", &cpu::XXX, &cpu::ABX, 4}, {"ORA", &cpu::ORA, &cpu::ABX, 4}, {"ASL", &cpu::ASL, &cpu::ABX, 7}, {"???", &cpu::XXX, &cpu::ABX, 7},
+       /* 2X */     {"JSR", &cpu::JSR, &cpu::ABS, 6}, {"AND", &cpu::AND, &cpu::IZX, 6}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IZX, 8}, {"BIT", &cpu::BIT, &cpu::ZP0, 3}, {"AND", &cpu::AND, &cpu::ZP0, 3}, {"ROL", &cpu::ROL, &cpu::ZP0, 5}, {"???", &cpu::XXX, &cpu::ZP0, 5}, {"PLP", &cpu::PLP, &cpu::IMP, 4}, {"AND", &cpu::AND, &cpu::IMM, 2}, {"ROL", &cpu::ROL, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IMM, 2}, {"BIT", &cpu::BIT, &cpu::ABS, 4}, {"AND", &cpu::AND, &cpu::ABS, 4}, {"ROL", &cpu::ROL, &cpu::ABS, 6}, {"???", &cpu::XXX, &cpu::ABS, 6},
+       /* 3X */     {"BMI", &cpu::BMI, &cpu::REL, 2}, {"AND", &cpu::AND, &cpu::IZY, 5}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IZY, 8}, {"???", &cpu::XXX, &cpu::ZPX, 4}, {"AND", &cpu::AND, &cpu::ZPX, 4}, {"ROL", &cpu::ROL, &cpu::ZPX, 6}, {"???", &cpu::XXX, &cpu::ZPX, 6}, {"SEC", &cpu::SEC, &cpu::IMP, 2}, {"AND", &cpu::AND, &cpu::ABY, 4}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::ABY, 7}, {"BIT", &cpu::BIT, &cpu::ABX, 4}, {"AND", &cpu::AND, &cpu::ABX, 4}, {"ROL", &cpu::ROL, &cpu::ABX, 7}, {"???", &cpu::XXX, &cpu::ABX, 7},
+       /* 4X */     {"RTI", &cpu::RTI, &cpu::IMP, 6}, {"EOR", &cpu::EOR, &cpu::IZX, 6}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IZX, 8}, {"???", &cpu::XXX, &cpu::ZP0, 3}, {"EOR", &cpu::EOR, &cpu::ZP0, 3}, {"LSR", &cpu::LSR, &cpu::ZP0, 5}, {"???", &cpu::XXX, &cpu::ZP0, 5}, {"PHA", &cpu::PHA, &cpu::IMP, 3}, {"EOR", &cpu::EOR, &cpu::IMM, 2}, {"LSR", &cpu::LSR, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IMM, 2}, {"JMP", &cpu::JMP, &cpu::ABS, 3}, {"EOR", &cpu::EOR, &cpu::ABS, 4}, {"LSR", &cpu::LSR, &cpu::ABS, 6}, {"???", &cpu::XXX, &cpu::ABS, 6},
+       /* 5X */     {"BVC", &cpu::BVC, &cpu::REL, 2}, {"EOR", &cpu::EOR, &cpu::IZY, 5}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IZY, 8}, {"???", &cpu::XXX, &cpu::ZPX, 4}, {"EOR", &cpu::EOR, &cpu::ZPX, 4}, {"LSR", &cpu::LSR, &cpu::ZPX, 6}, {"???", &cpu::XXX, &cpu::ZPX, 6}, {"CLI", &cpu::CLI, &cpu::IMP, 2}, {"EOR", &cpu::EOR, &cpu::ABY, 4}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::ABY, 7}, {"???", &cpu::XXX, &cpu::ABX, 4}, {"EOR", &cpu::EOR, &cpu::ABX, 4}, {"LSR", &cpu::LSR, &cpu::ABX, 7}, {"???", &cpu::XXX, &cpu::ABX, 7},
+       /* 6X */     {"RTS", &cpu::RTS, &cpu::IMP, 6}, {"ADC", &cpu::ADC, &cpu::IZX, 6}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IZX, 8}, {"???", &cpu::XXX, &cpu::ZP0, 3}, {"ADC", &cpu::ADC, &cpu::ZP0, 3}, {"ROR", &cpu::ROR, &cpu::ZP0, 5}, {"???", &cpu::XXX, &cpu::ZP0, 5}, {"PLA", &cpu::PLA, &cpu::IMP, 4}, {"ADC", &cpu::ADC, &cpu::IMM, 2}, {"ROR", &cpu::ROR, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IMM, 2}, {"JMP", &cpu::JMP, &cpu::IND, 5}, {"ADC", &cpu::ADC, &cpu::ABS, 4}, {"ROR", &cpu::ROR, &cpu::ABS, 6}, {"???", &cpu::XXX, &cpu::ABS, 6},
+       /* 7X */     {"BVS", &cpu::BVS, &cpu::REL, 2}, {"ADC", &cpu::ADC, &cpu::IZY, 5}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IZY, 8}, {"???", &cpu::XXX, &cpu::ZPX, 4}, {"ADC", &cpu::ADC, &cpu::ZPX, 4}, {"ROR", &cpu::ROR, &cpu::ZPX, 6}, {"???", &cpu::XXX, &cpu::ZPX, 6}, {"SEI", &cpu::SEI, &cpu::IMP, 2}, {"ADC", &cpu::ADC, &cpu::ABY, 4}, {"ROR", &cpu::ROR, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::ABY, 7}, {"???", &cpu::XXX, &cpu::ABX, 4}, {"ADC", &cpu::ADC, &cpu::ABX, 4}, {"ROR", &cpu::ROR, &cpu::ABX, 7}, {"???", &cpu::XXX, &cpu::ABX, 7},
+       /* 8X */     {"???", &cpu::XXX, &cpu::IMM, 2}, {"STA", &cpu::STA, &cpu::IZX, 6}, {"???", &cpu::XXX, &cpu::IMM, 2}, {"???", &cpu::XXX, &cpu::IZX, 6}, {"STY", &cpu::STY, &cpu::ZP0, 3}, {"STA", &cpu::STA, &cpu::ZP0, 3}, {"STX", &cpu::STX, &cpu::ZP0, 3}, {"???", &cpu::XXX, &cpu::ZP0, 3}, {"DEY", &cpu::DEY, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IMM, 2}, {"TXA", &cpu::TXA, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IMM, 2}, {"STY", &cpu::STY, &cpu::ABS, 4}, {"STA", &cpu::STA, &cpu::ABS, 4}, {"STX", &cpu::STX, &cpu::ABS, 4}, {"???", &cpu::XXX, &cpu::ABS, 4},
+       /* 9X */     {"BCC", &cpu::BCC, &cpu::REL, 2}, {"STA", &cpu::STA, &cpu::IZY, 6}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IZY, 6}, {"STY", &cpu::STY, &cpu::ZPX, 4}, {"STA", &cpu::STA, &cpu::ZPX, 4}, {"STX", &cpu::STX, &cpu::ZPY, 4}, {"???", &cpu::XXX, &cpu::ZPY, 4}, {"TYA", &cpu::TYA, &cpu::IMP, 2}, {"STA", &cpu::STA, &cpu::ABY, 5}, {"TXS", &cpu::TXS, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::ABY, 5}, {"???", &cpu::XXX, &cpu::ABX, 5}, {"STA", &cpu::STA, &cpu::ABX, 5}, {"???", &cpu::XXX, &cpu::ABY, 5}, {"???", &cpu::XXX, &cpu::ABY, 5},
+       /* AX */     {"LDY", &cpu::LDY, &cpu::IMM, 2}, {"LDA", &cpu::LDA, &cpu::IZX, 6}, {"LDX", &cpu::LDX, &cpu::IMM, 2}, {"???", &cpu::XXX, &cpu::IZX, 6}, {"LDY", &cpu::LDY, &cpu::ZP0, 3}, {"LDA", &cpu::LDA, &cpu::ZP0, 3}, {"LDX", &cpu::LDX, &cpu::ZP0, 3}, {"???", &cpu::XXX, &cpu::ZP0, 3}, {"TAY", &cpu::TAY, &cpu::IMP, 2}, {"LDA", &cpu::LDA, &cpu::IMM, 2}, {"TAX", &cpu::TAX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IMM, 2}, {"LDY", &cpu::LDY, &cpu::ABS, 4}, {"LDA", &cpu::LDA, &cpu::ABS, 4}, {"LDX", &cpu::LDX, &cpu::ABS, 4}, {"???", &cpu::XXX, &cpu::ABS, 4},
+       /* BX */     {"BCS", &cpu::BCS, &cpu::REL, 2}, {"LDA", &cpu::LDA, &cpu::IZY, 5}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IZY, 5}, {"LDY", &cpu::LDY, &cpu::ZPX, 4}, {"LDA", &cpu::LDA, &cpu::ZPX, 4}, {"LDX", &cpu::LDX, &cpu::ZPY, 4}, {"???", &cpu::XXX, &cpu::ZPY, 4}, {"CLV", &cpu::CLV, &cpu::IMP, 2}, {"LDA", &cpu::LDA, &cpu::ABY, 4}, {"TSX", &cpu::TSX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::ABY, 4}, {"LDY", &cpu::LDY, &cpu::ABX, 4}, {"LDA", &cpu::LDA, &cpu::ABX, 4}, {"LDX", &cpu::LDX, &cpu::ABY, 4}, {"???", &cpu::XXX, &cpu::ABY, 4},
+       /* CX */     {"CPY", &cpu::CPY, &cpu::IMM, 2}, {"CMP", &cpu::CMP, &cpu::IZX, 6}, {"???", &cpu::XXX, &cpu::IMM, 2}, {"???", &cpu::XXX, &cpu::IZX, 8}, {"CPY", &cpu::CPY, &cpu::ZP0, 3}, {"CMP", &cpu::CMP, &cpu::ZP0, 3}, {"DEC", &cpu::DEC, &cpu::ZP0, 5}, {"???", &cpu::XXX, &cpu::ZP0, 5}, {"INY", &cpu::INY, &cpu::IMP, 2}, {"CMP", &cpu::CMP, &cpu::IMM, 2}, {"DEX", &cpu::DEX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IMM, 2}, {"CPY", &cpu::CPY, &cpu::ABS, 4}, {"CMP", &cpu::CMP, &cpu::ABS, 4}, {"DEC", &cpu::DEC, &cpu::ABS, 6}, {"???", &cpu::XXX, &cpu::ABS, 6},
+       /* DX */     {"BNE", &cpu::BNE, &cpu::REL, 2}, {"CMP", &cpu::CMP, &cpu::IZY, 5}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IZY, 8}, {"???", &cpu::XXX, &cpu::ZPX, 4}, {"CMP", &cpu::CMP, &cpu::ZPX, 4}, {"DEC", &cpu::DEC, &cpu::ZPX, 6}, {"???", &cpu::XXX, &cpu::ZPX, 6}, {"CLD", &cpu::CLD, &cpu::IMP, 2}, {"CMP", &cpu::CMP, &cpu::ABY, 4}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::ABY, 7}, {"???", &cpu::XXX, &cpu::ABX, 4}, {"CMP", &cpu::CMP, &cpu::ABX, 4}, {"DEC", &cpu::DEC, &cpu::ABX, 7}, {"???", &cpu::XXX, &cpu::ABX, 7},
+       /* EX */     {"CPX", &cpu::CPX, &cpu::IMM, 2}, {"SBC", &cpu::SBC, &cpu::IZX, 6}, {"???", &cpu::XXX, &cpu::IMM, 2}, {"???", &cpu::XXX, &cpu::IZX, 8}, {"CPX", &cpu::CPX, &cpu::ZP0, 3}, {"SBC", &cpu::SBC, &cpu::ZP0, 3}, {"INC", &cpu::INC, &cpu::ZP0, 5}, {"???", &cpu::XXX, &cpu::ZP0, 5}, {"INX", &cpu::INX, &cpu::IMP, 2}, {"SBC", &cpu::SBC, &cpu::IMM, 2}, {"NOP", &cpu::NOP, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IMM, 2}, {"CPX", &cpu::CPX, &cpu::ABS, 4}, {"SBC", &cpu::SBC, &cpu::ABS, 4}, {"INC", &cpu::INC, &cpu::ABS, 6}, {"???", &cpu::XXX, &cpu::ABS, 6},
+       /* FX */     {"BEQ", &cpu::BEQ, &cpu::REL, 2}, {"SBC", &cpu::SBC, &cpu::IZY, 5}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::IZY, 8}, {"???", &cpu::XXX, &cpu::ZPX, 4}, {"SBC", &cpu::SBC, &cpu::ZPX, 4}, {"INC", &cpu::INC, &cpu::ZPX, 6}, {"???", &cpu::XXX, &cpu::ZPX, 6}, {"SED", &cpu::SED, &cpu::IMP, 2}, {"SBC", &cpu::SBC, &cpu::ABY, 4}, {"???", &cpu::XXX, &cpu::IMP, 2}, {"???", &cpu::XXX, &cpu::ABY, 7}, {"???", &cpu::XXX, &cpu::ABX, 4}, {"SBC", &cpu::SBC, &cpu::ABX, 4}, {"INC", &cpu::INC, &cpu::ABX, 7}, {"???", &cpu::XXX, &cpu::ABX, 7},
 
     };
 }
@@ -85,6 +85,30 @@ void Cpu::reset(){
 
 // perform a clock cycle of emulation
 void Cpu::clock(){
+
+    if(cycles == 0) {
+
+        // set current opcode
+        opcode = read(pc);
+
+        // set unused status flag bit to true (1)
+        SetFlag(U, true);
+
+        // increment program counter
+        pc++;
+
+        // set the amount of cycles that the instruction will take, then
+        // we need to add on any additional cycles required by either
+        // the addressing mode or operation
+        cycles = lookup_table[opcode].cycles;
+        uint8_t addCyclesAddr = (this->*lookup_table[opcode].addrmode)();
+        uint8_t addCyclesOp = (this->*lookup_table[opcode].operate)();
+
+        cycles += (addCyclesAddr + addCyclesOp);
+    }
+
+    clock_count++;
+    cycles--;
 }
 
 //////////////////////////////////////////////////////////////
@@ -129,6 +153,7 @@ uint8_t Cpu::ZPX(){
 uint8_t Cpu::ZPY(){
     addr_abs = (read(pc) + y);
     pc++;
+    addr_abs &= 0x00FF;
     return 0;
 };
 
@@ -247,6 +272,8 @@ uint8_t Cpu::fetch()
     return fetched_data;
 }
 
+
+
 /////////////////////////////////////////////////////
 // --------------------OPCODES-------------------- //
 /////////////////////////////////////////////////////
@@ -255,12 +282,31 @@ uint8_t Cpu::ADC() {
     return 0;
 }
 
+// AND - logical AND operation. accumulator = a & memory
 uint8_t Cpu::AND() {
     fetch();
+    a &= fetched_data;
+    SetFlag(N, a & 0x80);
+    SetFlag(Z, a == 0x00);
     return 0;
 }
 
+// ASL - arithmetic shift left
 uint8_t Cpu::ASL() {
+    fetch();
+    temp = (uint16_t) fetched_data << 1;
+    SetFlag(N, temp & 0x80);
+    SetFlag(Z, (temp & 0x00FF) & 0x00);
+    SetFlag(C, (temp & 0xFF00) > 0 );
+
+    // if the addressing mode is implied, we need to put the
+    // shifted data into the accumulator. Otherwise, the
+    // shifted data gets written to memory
+    if(lookup_table[opcode].addrmode == &Cpu::IMP) {
+        a = temp & 0x00FF;
+    }else {
+        write(addr_abs, (temp & 0x00FF));
+    }
     return 0;
 }
 

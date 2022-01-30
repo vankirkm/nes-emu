@@ -12,6 +12,13 @@ int main() {
         std::cout << "hello world";
     }
 
+    char exitChar = 0;
+
+    while(exitChar != 'f'){
+        std::cout << "enter 'f' to stop cycle emulation\n";
+        std::cin >> exitChar;
+    }
+
     return 0;
 
 }
