@@ -310,31 +310,117 @@ uint8_t Cpu::ASL() {
     return 0;
 }
 
+// BCC - Branch if carry flag is clear
 uint8_t Cpu::BCC() {
+
+    if(GetFlag(C) == 0) {
+        cycles++;
+        addr_abs = pc + addr_rel;
+
+        // if the address we are branching to is not on the
+        // same page as the previous address, we need to
+        // add an additional clock cycle
+        if(addr_abs & 0xFF00 != pc & 0xFF00)
+            cycles++;
+
+        pc = addr_abs;
+    }
     return 0;
 }
 
+// BCS - Branch if carry flag is set. Follows the same cycle
+// rules as BCC. If the new address is not on the same page as
+// the previous address, we must add a clock cycle
 uint8_t Cpu::BCS() {
+
+    if(GetFlag(C) != 0) {
+        cycles++;
+        addr_abs = pc + addr_rel;
+
+        // if the address we are branching to is not on the
+        // same page as the previous address, we need to
+        // add an additional clock cycle
+        if(addr_abs & 0xFF00 != pc & 0xFF00)
+            cycles++;
+
+        pc = addr_abs;
+    }
     return 0;
 }
 
+// BEQ - Branch if zero flag is set. Follows the same cycle
+// rules as BCC. If the new address is not on the same page as
+// the previous address, we must add a clock cycle
 uint8_t Cpu::BEQ() {
+
+    if(GetFlag(Z) != 0) {
+        cycles++;
+        addr_abs = pc + addr_rel;
+
+        if(addr_abs & 0xFF00 != pc & 0xFF00)
+            cycles++;
+
+        pc = addr_abs;
+    }
     return 0;
 }
 
+// BIT - Bit test. Test if one more bits are set in a memory location
+// by ANDing the accumulator with the data fetched from memory. If the
+// result of this operation is zero, set the zero flag. Set the overflow
+// flag to bit 6 of the fetched data. Set the negative flag to bit 7
+// of the fetched data.
 uint8_t Cpu::BIT() {
+    fetch();
+    temp = a & fetched_data;
+    SetFlag(Z, (temp & 0x00FF) == 0x00);
+    SetFlag(V, fetched_data & (1 << 6));
+    SetFlag(N, fetched_data & (1 << 7));
     return 0;
 }
 
+// BMI - branch if negative flag is set. Same clock cycle rules as BCC.
 uint8_t Cpu::BMI() {
+
+    if(GetFlag(N) == 1) {
+        cycles++;
+        addr_abs = pc + addr_rel;
+
+        if(addr_abs & 0xFF00 != pc & 0xFF00)
+            cycles++;
+
+        pc = addr_abs;
+    }
     return 0;
 }
 
+// BNE - branch if the zero flag is clear. Same clock cycle rules as BCC
 uint8_t Cpu::BNE() {
+    if(GetFlag(Z) == 0) {
+        cycles++;
+        addr_abs = pc + addr_rel;
+
+        if(addr_abs & 0xFF00 != pc & 0xFF00)
+            cycles++;
+
+        pc = addr_abs;
+    }
     return 0;
 }
 
+// BPL - branch if positive (if the negative flag is not set).
+// Same clock cycle rules as BCC
 uint8_t Cpu::BPL() {
+    if(GetFlag(N) == 0) {
+        cycles++;
+        addr_abs = pc + addr_rel;
+
+        if(addr_abs & 0xFF00 != pc & 0xFF00)
+            cycles++;
+
+        pc = addr_abs;
+    }
+    return 0;
     return 0;
 }
 
