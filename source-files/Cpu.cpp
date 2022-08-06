@@ -471,6 +471,10 @@ uint8_t Cpu::BPL() {
     return 0;
 }
 
+// BRK - instruction forces the generation of an interrupt request.
+// The program counter and processor status are pushed on the stack
+// then the IRQ interrupt vector at $FFFE/F is loaded into the PC and
+// the break flag in the status set to one.
 uint8_t Cpu::BRK() {
     
     pc++;
@@ -488,39 +492,103 @@ uint8_t Cpu::BRK() {
     return 0;
 }
 
+// BVC - Branch if overflow flag is clear by adding relative displacement
+// to program counter. 1 cycle if branch succeeds, 2 cycles if to a new page
 uint8_t Cpu::BVC() {
+
+    if(GetFlag(V) == 0) {
+        cycles++;
+        addr_abs = pc + addr_rel;
+
+        if ((addr_abs & 0xFF00) != (pc & 0xFF00))
+            cycles++;
+
+        pc = addr_abs;
+    }
+
     return 0;
+
 }
 
+// BVS - Branch if overflow flag is set by adding relative displacement
+// to program counter. 1 cycle if branch succeeds, 2 cycles if to a new page
 uint8_t Cpu::BVS() {
+
+    if(GetFlag(V) == 1) {
+        cycles++;
+        addr_abs = pc + addr_rel;
+
+        if ((addr_abs & 0xFF00) != (pc & 0xFF00))
+            cycles++;
+
+        pc = addr_abs;
+    }
+
     return 0;
+
 }
 
+// CLC - clear carry flag
 uint8_t Cpu::CLC() {
+    SetFlag(C, 0);
     return 0;
 }
 
+// CLD - clear decimal mode flag
 uint8_t Cpu::CLD() {
+    SetFlag(D, 0);
     return 0;
 }
 
+// CLI - clear interrupt disable flag
 uint8_t Cpu::CLI() {
+    SetFlag(I, 0);
     return 0;
 }
 
+// CLV - clear overflow flag
 uint8_t Cpu::CLV() {
+    SetFlag(V, 0);
     return 0;
 }
 
+// CMP - compare the contents of the accumulator with
+// an item in memory. Set CZN flags accordingly
 uint8_t Cpu::CMP() {
-    return 0;
+
+    fetch();
+    temp = (uint16_t)a - (uint16_t)fetched_data;
+    SetFlag(C, a >= fetched_data);
+    SetFlag(Z, (temp & 0x00FF) == 0x0000);
+    SetFlag(N, temp & 0x0080);
+
+    return 1;
+
 }
 
+// CPX - compare the contents of the X register with
+// an item in memory. Set CZN flags accordingly
 uint8_t Cpu::CPX() {
+
+    fetch();
+    temp = (uint16_t)x - (uint16_t)fetched_data;
+    SetFlag(C, x >= fetched_data);
+    SetFlag(Z, (temp & 0x00FF) == 0x0000);
+    SetFlag(N, temp & 0x0080);
+
     return 0;
 }
 
+// CPY - compare the contents of the Y register with
+// an item in memory. Set CZN flags accordingly
 uint8_t Cpu::CPY() {
+
+    fetch();
+    temp = (uint16_t)y - (uint16_t)fetched_data;
+    SetFlag(C, y >= fetched_data);
+    SetFlag(Z, (temp & 0x00FF) == 0x0000);
+    SetFlag(N, temp & 0x0080);
+
     return 0;
 }
 
