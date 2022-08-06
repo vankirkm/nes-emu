@@ -888,8 +888,25 @@ uint8_t Cpu::RTS() {
     return 0;
 }
 
+
+
 uint8_t Cpu::SBC() {
-    return 0;
+
+    fetch();
+
+    // We can invert the bottom 8 bits with bitwise xor
+    uint16_t value = ((uint16_t)fetched_data) ^ 0x00FF;
+
+    // then perform the same operation as addition
+    temp = (uint16_t)a + value + (uint16_t)GetFlag(C);
+    SetFlag(C, temp & 0xFF00);
+    SetFlag(Z, ((temp & 0x00FF) == 0));
+    SetFlag(V, (temp ^ (uint16_t)a) & (temp ^ value) & 0x0080);
+    SetFlag(N, temp & 0x0080);
+    a = temp & 0x00FF;
+
+    return 1;
+
 }
 
 
@@ -966,19 +983,42 @@ uint8_t Cpu::TAY() {
     return 0;
 }
 
+// TSX - Copies the current contents of the stack register into
+// the X register and sets the zero and negative flags as appropriate.
 uint8_t Cpu::TSX() {
+
+    x = s_point;
+    SetFlag(Z, x == 0x00);
+    SetFlag(N, x & 0x80);
+
     return 0;
 }
 
+// TXA - Copies the current contents of the X register into the
+// accumulator and sets the zero and negative flags as appropriate.
 uint8_t Cpu::TXA() {
+
+    a = x;
+    SetFlag(Z, a == 0x00);
+    SetFlag(N, a & 0x80);
     return 0;
 }
 
 uint8_t Cpu::TXS() {
+
+    s_point = x;
+
     return 0;
 }
 
+// TYA - Copies the current contents of the Y register into the
+// accumulator and sets the zero and negative flags as appropriate.
 uint8_t Cpu::TYA() {
+
+    a = y;
+    SetFlag(Z, a == 0x00);
+    SetFlag(N, a & 0x80);
+
     return 0;
 }
 
