@@ -554,6 +554,8 @@ uint8_t Cpu::CLV() {
 
 // CMP - compare the contents of the accumulator with
 // an item in memory. Set CZN flags accordingly
+// FOR ABS X, ABS Y, AND IND X ADDRESSING, MAY NEED
+// TO ADD A CYCLE IF PAGE CROSSED
 uint8_t Cpu::CMP() {
 
     fetch();
@@ -593,14 +595,30 @@ uint8_t Cpu::CPY() {
 }
 
 uint8_t Cpu::DEC() {
+
+    fetch();
+    temp = fetched_data - 1;
+    write(addr_abs, temp & 0x00FF);
+    SetFlag(Z, (temp & 0x00FF) == 0x0000);
+    SetFlag(N, temp & 0x0080);
+
     return 0;
 }
 
 uint8_t Cpu::DEX() {
+
+    x--;
+    SetFlag(Z, x == 0x00);
+    SetFlag(N, x & 0x80);
+
     return 0;
 }
 
 uint8_t Cpu::DEY() {
+
+    y--;
+    SetFlag(Z, y == 0x00);
+    SetFlag(N, y & 0x80);
     return 0;
 }
 
