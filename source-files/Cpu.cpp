@@ -41,6 +41,54 @@ void Cpu::write(uint16_t a, uint8_t d){
     bus->write(a, d);
 }
 
+void Cpu::irq() {
+
+    if (GetFlag(I) == 0) {
+        write(0x0100 + s_point, (pc >> 8) & 0x00FF);
+        s_point--;
+        write(0x0100 + s_point, pc & 0x00FF);
+        s_point--;
+
+        SetFlag(B, 0);
+        SetFlag(U, 1);
+        SetFlag(I, 1);
+        write(0x0100 + s_point, status);
+        s_point--;
+
+        addr_abs = 0xFFFE;
+        uint16_t lo = read(addr_abs + 0);
+        uint16_t hi = read(addr_abs + 1);
+        pc = (hi << 8) | lo;
+
+        cycles = 7;
+    }
+
+}
+
+void Cpu::nmi() {
+
+    if (GetFlag(I) == 0) {
+        write(0x0100 + s_point, (pc >> 8) & 0x00FF);
+        s_point--;
+        write(0x0100 + s_point, pc & 0x00FF);
+        s_point--;
+
+        SetFlag(B, 0);
+        SetFlag(U, 1);
+        SetFlag(I, 1);
+        write(0x0100 + s_point, status);
+        s_point--;
+
+        addr_abs = 0xFFFE;
+        uint16_t lo = read(addr_abs + 0);
+        uint16_t hi = read(addr_abs + 1);
+        pc = (hi << 8) | lo;
+
+        cycles = 8;
+    }
+
+}
+
 uint8_t Cpu::GetFlag(CPU_FLAGS f){
     return ((status & f) > 0) ? 1 : 0;
 }
@@ -251,10 +299,10 @@ uint8_t Cpu::IZX(){
 // and then is offset by the value in the Y register. An additional clock cycle is
 // required if this results in a change in page.
 uint8_t Cpu::IZY(){
-    uint16_t temp = read(pc);
+    uint16_t tmp = read(pc);
     pc++;
-    uint16_t low = read(temp & 0x00FF);
-    uint16_t high = read((temp + 1) & 0x00FF);
+    uint16_t low = read(tmp & 0x00FF);
+    uint16_t high = read((tmp + 1) & 0x00FF);
     addr_abs = addr_abs = (high << 8) | low;
     addr_abs += y;
 
@@ -415,16 +463,28 @@ uint8_t Cpu::BPL() {
         cycles++;
         addr_abs = pc + addr_rel;
 
-        if(addr_abs & 0xFF00 != pc & 0xFF00)
+        if((addr_abs & 0xFF00) != (pc & 0xFF00))
             cycles++;
 
         pc = addr_abs;
     }
     return 0;
-    return 0;
 }
 
 uint8_t Cpu::BRK() {
+    
+    pc++;
+    SetFlag(I, 1);
+    write(0x0100 + s_point, (pc >> 8) & 0x00FF);
+    s_point--;
+    write(0x0100 + s_point, pc & 0x00FF);
+    s_point--;
+    SetFlag(B, 1);
+    write(0x0100 + s_point, status);
+    s_point--;
+    SetFlag(B, 0);
+
+    pc = (uint16_t)read(0xFFFE) | ((uint16_t)read(0xFFFF) << 8);
     return 0;
 }
 

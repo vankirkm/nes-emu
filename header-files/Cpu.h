@@ -42,6 +42,8 @@ public:
 
     void reset();
     void clock();
+    void irq();
+    void nmi();
 
     uint8_t GetFlag(CPU_FLAGS f);
     void SetFlag(CPU_FLAGS f, bool v);
