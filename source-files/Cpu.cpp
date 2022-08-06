@@ -594,6 +594,8 @@ uint8_t Cpu::CPY() {
     return 0;
 }
 
+// DEC - decrement the value at a specific location in
+// memory. set ZN flags accordingly
 uint8_t Cpu::DEC() {
 
     fetch();
@@ -605,6 +607,8 @@ uint8_t Cpu::DEC() {
     return 0;
 }
 
+// DEX - decrement the value in X register.
+// set ZN flags accordingly
 uint8_t Cpu::DEX() {
 
     x--;
@@ -614,6 +618,8 @@ uint8_t Cpu::DEX() {
     return 0;
 }
 
+// DEY - decrement the value in Y register.
+// set ZN flags accordingly
 uint8_t Cpu::DEY() {
 
     y--;
@@ -622,43 +628,136 @@ uint8_t Cpu::DEY() {
     return 0;
 }
 
+// EOR - Exclusive or the accumulator with the contents
+// of a fetched piece of data from memory. set ZN flags
+// accordingly.
 uint8_t Cpu::EOR() {
-    return 0;
+
+    fetch();
+    a = a ^ fetched_data;
+    SetFlag(Z, a == 0x00);
+    SetFlag(N, a & 0x80);
+
+    return 1;
 }
 
+// INC - increment the value at a specific location in
+// memory. set ZN flags accordingly
 uint8_t Cpu::INC() {
+
+    fetch();
+    temp = fetched_data + 1;
+    write(addr_abs, temp & 0x00FF);
+    SetFlag(Z, (temp & 0x00FF) == 0x0000);
+    SetFlag(N, temp & 0x0080);
+
     return 0;
 }
 
+// INX - increment the X register. Set ZN flags accordingly
 uint8_t Cpu::INX() {
+
+    x++;
+    SetFlag(Z, x == 0x00);
+    SetFlag(N, x & 0x80);
+
     return 0;
 }
 
+// INY - increment the Y register. Set ZN flags accordingly
 uint8_t Cpu::INY() {
+
+    y++;
+    SetFlag(Z, y == 0x00);
+    SetFlag(N, y & 0x80);
+
     return 0;
 }
 
+// JMP - sets the program counter to the address specified
+// by the operand
 uint8_t Cpu::JMP() {
+
+    pc = addr_abs;
+
     return 0;
 }
 
+
+// JSR - jump to subroutine. pushes the address (minus one) of the
+// return point on to the stack and then sets the program counter
+// to the target memory address.
 uint8_t Cpu::JSR() {
+
+    pc--;
+
+    write(0x0100 + s_point, (pc >> 8) & 0x00FF);
+    s_point--;
+    write(0x0100 + s_point, pc & 0x00FF);
+    s_point--;
+
+    pc = addr_abs;
+
     return 0;
 }
 
+// LDA - Loads a byte of memory into the accumulator
+// setting the zero and negative flags as appropriate.
 uint8_t Cpu::LDA() {
-    return 0;
+
+    fetch();
+    a = fetched_data;
+    SetFlag(Z, a == 0);
+    SetFlag(N, a & 0x80);
+
+    return 1;
 }
 
+// LDX - Loads a byte of memory into the X register
+// setting the zero and negative flags as appropriate.
 uint8_t Cpu::LDX() {
-    return 0;
+
+    fetch();
+    x = fetched_data;
+    SetFlag(Z, x == 0);
+    SetFlag(N, x & 0x80);
+
+    return 1;
 }
 
+// LDY - Loads a byte of memory into the Y register
+// setting the zero and negative flags as appropriate.
 uint8_t Cpu::LDY() {
+
+    fetch();
+    y = fetched_data;
+    SetFlag(Z, y == 0);
+    SetFlag(N, y & 0x80);
+
     return 0;
 }
 
+// LSR - Each of the bits in A or M is shifted one place to the right.
+// The bit that was in bit 0 is shifted into the carry flag.
+// Bit 7 is set to zero.
 uint8_t Cpu::LSR() {
+
+    fetch();
+    // If addressing mode is implied, we are working with the accumulator.
+    // Otherwise, we are working with data from memory
+    if (lookup_table[opcode].addrmode == &Cpu::IMP){
+        SetFlag(C, a & 0x0001);
+        temp = a >> 1;
+        a = temp & 0x00FF;
+    }else {
+        SetFlag(C, fetched_data & 0x0001);
+        temp = fetched_data >> 1;
+        write(addr_abs, temp & 0x00FF);
+    }
+
+    SetFlag(Z, (temp & 0x00FF) == 0x0000);
+    SetFlag(N, temp & 0x0080);
+
     return 0;
 }
 
@@ -666,39 +765,126 @@ uint8_t Cpu::NOP() {
     return 0;
 }
 
+// ORA - An inclusive OR is performed, bit by bit, on the
+// accumulator contents using the contents of a byte of memory.
 uint8_t Cpu::ORA() {
-    return 0;
+    fetch();
+
+    a = a | fetched_data;
+    SetFlag(Z, a == 0x00);
+    SetFlag(N, a & 0x80);
+
+    return 1;
 }
 
+// PHA - Pushes a copy of the accumulator on to the stack.
 uint8_t Cpu::PHA() {
+
+    write(0x0100 + s_point, a);
+    s_point--;
+
     return 0;
 }
 
+// PHP - Pushes a copy of the status flags on to the stack.
 uint8_t Cpu::PHP() {
+
+    write(0x0100 + s_point, status);
+    s_point--;
     return 0;
+
 }
 
+// PLA - pulls an 8 bit value off the stack into the accumulator
+// Z and N flags are set appropriately
 uint8_t Cpu::PLA() {
+
+    s_point++;
+    a = read(0x100 + s_point);
+    SetFlag(Z, a == 0x00);
+    SetFlag(N, a & 0x80);
     return 0;
 }
 
+// PLP - pulls an 8 bit value off the stack into the status register
+// Z and N flags are set appropriately
 uint8_t Cpu::PLP() {
+
+    s_point++;
+    status = read(0x100 + s_point);
+    SetFlag(U, 1);
+
     return 0;
 }
 
+// ROL - Move each of the bits in either A or M one place to the left.
+// Bit 0 is filled with the current value of the carry flag whilst
+// the old bit 7 becomes the new carry flag value.
 uint8_t Cpu::ROL() {
+
+    fetch();
+
+    if (lookup_table[opcode].addrmode == &Cpu::IMP) {
+        temp = (uint16_t)(a << 1) | GetFlag(C);
+        a = temp & 0x00FF;
+    }
+
+    else {
+        temp = (uint16_t)(fetched_data << 1) | GetFlag(C);
+        write(addr_abs, temp & 0x00FF);
+    }
+
+    SetFlag(C, temp & 0xFF00);
+    SetFlag(Z, (temp & 0x00FF) == 0x0000);
+    SetFlag(N, temp & 0x0080);
+
     return 0;
 }
 
 uint8_t Cpu::ROR() {
+
+    fetch();
+
+    if (lookup_table[opcode].addrmode == &Cpu::IMP) {
+        temp = (uint16_t)(a >> 1) | (GetFlag(C) << 7);
+        SetFlag(C, a & 0x01);
+        a = temp & 0x00FF;
+    }
+
+    else {
+        temp = (uint16_t)(fetched_data >> 1) | (GetFlag(C) << 7);
+        SetFlag(C, fetched_data & 0x01);
+        write(addr_abs, temp & 0x00FF);
+    }
+
+    SetFlag(Z, (temp & 0x00FF) == 0x0000);
+    SetFlag(N, temp & 0x0080);
+
     return 0;
 }
 
 uint8_t Cpu::RTI() {
+
+    s_point++;
+    status = read(0x0100 + s_point);
+
+    s_point++;
+    pc = (uint16_t)read(0x0100 + s_point);
+    s_point++;
+    pc |= (uint16_t)read(0x0100 + s_point) << 8;
+
     return 0;
 }
 
 uint8_t Cpu::RTS() {
+
+    s_point++;
+    pc = (uint16_t)read(0x0100 + s_point);
+    s_point++;
+    pc |= (uint16_t)read(0x0100 + s_point) << 8;
+
+    pc++;
+
     return 0;
 }
 
@@ -706,35 +892,77 @@ uint8_t Cpu::SBC() {
     return 0;
 }
 
+
+// SEC - set carry flag
 uint8_t Cpu::SEC() {
+
+    SetFlag(C, 1);
+
     return 0;
 }
 
+// SED - set decimal mode flag
 uint8_t Cpu::SED() {
+
+    SetFlag(D, 1);
+
     return 0;
 }
 
+// SEI - set interrupt disable flag
 uint8_t Cpu::SEI() {
+
+    SetFlag(I, 1);
+
     return 0;
 }
 
+// STA - store the contents of the accumulator
+// in memory
 uint8_t Cpu::STA() {
+
+    write(addr_abs, a);
+
     return 0;
 }
 
+// STA - store the contents of the X register
+// in memory
 uint8_t Cpu::STX() {
+
+    write(addr_abs, x);
+
     return 0;
 }
 
+// STA - store the contents of the Y register
+// in memory
 uint8_t Cpu::STY() {
+
+    write(addr_abs, y);
+
     return 0;
 }
 
+// TAX - Copies the current contents of the accumulator into
+// the X register and sets the zero and negative flags as appropriate.
 uint8_t Cpu::TAX() {
+
+    x = a;
+    SetFlag(Z, x == 0x00);
+    SetFlag(N, x & 0x80);
+
     return 0;
 }
 
+// TAY - Copies the current contents of the accumulator into
+// the Y register and sets the zero and negative flags as appropriate.
 uint8_t Cpu::TAY() {
+
+    y = a;
+    SetFlag(Z, y == 0x00);
+    SetFlag(N, y & 0x80);
+
     return 0;
 }
 
