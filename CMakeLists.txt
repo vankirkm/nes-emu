@@ -3,9 +3,17 @@ project(NesEmulator)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(SDL2_INCLUDE_DIR "/Library/Frameworks/SDL2.framework")
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIR})
+# Add SDL2 CMake modules
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 
 add_executable(NesEmulator source-files/main.cpp source-files/Cpu.cpp source-files/Bus.cpp header-files/Cpu.h header-files/Bus.h)
-target_link_libraries(NesEmulator ${SDL2_LIBRARIES})
+
+# Add all headers files under the include directory
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+
+# Add SDL2 library
+find_package(SDL2 REQUIRED)
+target_link_libraries(${PROJECT_NAME} SDL2::Main)
+# Add SDL2_ttf library
+find_package(SDL2_ttf REQUIRED)
+target_link_libraries(${PROJECT_NAME} SDL2::TTF)

@@ -41,6 +41,7 @@ void Cpu::write(uint16_t a, uint8_t d){
     bus->write(a, d);
 }
 
+// interrupt request
 void Cpu::irq() {
 
     if (GetFlag(I) == 0) {
@@ -65,6 +66,7 @@ void Cpu::irq() {
 
 }
 
+// non-masking interrupt
 void Cpu::nmi() {
 
     if (GetFlag(I) == 0) {
