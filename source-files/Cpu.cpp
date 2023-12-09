@@ -81,7 +81,7 @@ void Cpu::nmi() {
         write(0x0100 + s_point, status);
         s_point--;
 
-        addr_abs = 0xFFFE;
+        addr_abs = 0xFFFA;
         uint16_t lo = read(addr_abs + 0);
         uint16_t hi = read(addr_abs + 1);
         pc = (hi << 8) | lo;
@@ -122,7 +122,7 @@ void Cpu::reset(){
     a = 0;
     x = 0;
     y = 0;
-    s_point = 0xFD;
+    s_point = 0xFF;
     status = 0x00 | U;
 
     // clear helper variables
@@ -329,6 +329,22 @@ uint8_t Cpu::fetch()
 /////////////////////////////////////////////////////
 
 uint8_t Cpu::ADC() {
+    fetch();
+
+    temp = (uint16_t)a + (uint16_t)fetched_data + (uint16_t) GetFlag(C);
+
+    // if temp > 255, we know that whatever value it is (positive or negative)
+    // is greater than 8 bits, and can set C to 1
+    SetFlag(C, temp > 255);
+
+    // positive + positive = negative <----- overflow occurred
+    // negative + negative = positive <----- more overflow
+    SetFlag(V, temp > 255);
+
+    SetFlag(N, temp & 0x80);
+
+    SetFlag(Z, (temp & 0x00FF) == 0);
+
     return 0;
 }
 
@@ -390,7 +406,7 @@ uint8_t Cpu::BCS() {
         // if the address we are branching to is not on the
         // same page as the previous address, we need to
         // add an additional clock cycle
-        if(addr_abs & 0xFF00 != pc & 0xFF00)
+        if((addr_abs & 0xFF00) != (pc & 0xFF00))
             cycles++;
 
         pc = addr_abs;

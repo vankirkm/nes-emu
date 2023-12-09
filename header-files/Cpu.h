@@ -24,8 +24,13 @@ public:
         Z = (1 << 1),	// Zero
         I = (1 << 2),	// Disable Interrupts
         D = (1 << 3),	// Decimal Mode
+
+        // The B and U flags both shouldn't have any effect on the NES CPU,
+        // but interrupts set the B flag, and the U flag is expected to always be 1
+        // so both statuf flags included in this implementation
         B = (1 << 4),	// Break
         U = (1 << 5),	// Unused
+
         V = (1 << 6),	// Overflow
         N = (1 << 7),	// Negative
     };
